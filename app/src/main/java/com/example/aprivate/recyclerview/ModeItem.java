@@ -43,7 +43,6 @@ public class ModeItem {
         itemList.add(new ModeItem("proshu", R.drawable.emma));
         itemList.add(new ModeItem("berega", R.drawable.emma));
 
-
         return itemList;
     }
 }

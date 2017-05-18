@@ -28,19 +28,19 @@ public class MainActivity extends AppCompatActivity {
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler);
 
-        mLinearLayoutManagerVertical = new LinearLayoutManager(this);
+        //mLinearLayoutManagerVertical = new LinearLayoutManager(this);
         mlinearLayoutManagerHorizontal = new LinearLayoutManager(this);
 
-        mRecyclerView.setLayoutManager(mLinearLayoutManagerVertical);
+        mRecyclerView.setLayoutManager(mlinearLayoutManagerHorizontal);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         mAdapter = new RecyclerAdapter();
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.addAll(ModeItem.getFakeItems());
 
-
     }
 
     private class MyRecyclerViewHolder extends RecyclerView.ViewHolder{
+        public static final int TYPE = 454;
         private TextView title;
         private ImageView image;
 
@@ -48,20 +48,35 @@ public class MainActivity extends AppCompatActivity {
             super(itemView);
             title = (TextView) itemView.findViewById(R.id.title_1);
             image = (ImageView) itemView.findViewById(R.id.image_1);
-
         }
 
         public void bind(ModeItem modeItem){
             image.setImageResource(modeItem.getmImgID());
-           //image.setImageBitmap(BitmapFactory.decodeResource(image.getResources(),modeItem.getmImgID()));
             title.setText(modeItem.getAuthor());
         }
-
-
     }
 
-    private class RecyclerAdapter extends RecyclerView.Adapter<MyRecyclerViewHolder>{
+    private class RecyclerAdapter extends RecyclerView.Adapter<MyRecyclerViewHolder>
+     implements View.OnClickListener{
         private ArrayList<ModeItem> items = new ArrayList<>();
+        private RecyclerView mRecyclerView;
+
+        @Override
+        public int getItemViewType(int position) {
+            return MyRecyclerViewHolder.TYPE;
+        }
+
+        @Override
+        public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+            super.onAttachedToRecyclerView(recyclerView);
+            this.mRecyclerView = recyclerView;
+        }
+
+        @Override
+        public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+            super.onDetachedFromRecyclerView(recyclerView);
+            this.mRecyclerView = null;
+        }
 
         public void addAll(List<ModeItem> fakeitems){
             //int pos = getItemCount();
@@ -73,20 +88,31 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public MyRecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_card, parent, false);
+            switch (viewType) {
+                case MyRecyclerViewHolder.TYPE:
+                View v = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.item_card, parent, false);
+                MyRecyclerViewHolder vh = new MyRecyclerViewHolder(v);
 
-            return new MyRecyclerViewHolder(v);
+                return vh;
+            }
+            return null;
         }
 
         @Override
         public void onBindViewHolder(MyRecyclerViewHolder holder, int position) {
+
             holder.bind(items.get(position));
         }
 
         @Override
         public int getItemCount() {
             return items.size();
+        }
+
+        @Override
+        public void onClick(View v) {
+            mRecyclerView.getChildViewHolder(v);
         }
     }
 }
